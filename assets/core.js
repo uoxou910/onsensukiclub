@@ -101,6 +101,13 @@ async function modernApi(action,payload={},token=''){
  }
  if(action==='admin')return sanitize(data);
  if(action==='login'&&data.admin)return {...data,admin:sanitize(data.admin)};
+ // Migrated GAS wraps the uploaded card in {ok:true,data:{ok:true,card}}.
+ // The editor needs the actual card (especially its id) before updating labels.
+ if(action==='upload'){
+  const card=normalizeCard(data.card);
+  if(!card?.id)throw Error('アップロード結果のフレカIDが取得できません');
+  return card;
+ }
  return data;
 }
 async function api(action,payload={},token=''){
