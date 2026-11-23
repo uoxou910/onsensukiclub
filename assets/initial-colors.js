@@ -1,0 +1,1 @@
+window.SITE_E_BOOTSTRAP_COLORS={"syncedAt":"2026-11-23T17:12:00+09:00","colors":{"すべて":{"mode":"gradient","first":"#ef9fc3","second":"#8fd3e9"},"そると":{"mode":"solid","first":"#f6c7d5","second":"#c5edfa"},"みりん":{"mode":"solid","first":"#d92441","second":"#fafdd8"},"すう":{"mode":"solid","first":"#cde7bc","second":"#f6bad5"}}};
