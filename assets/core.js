@@ -45,6 +45,8 @@ function saveColors(colors){
  const out={};
  for(const key of Object.keys(DEFAULT_COLORS))out[key]=colorSpec(colors[key],DEFAULT_COLORS[key]);
  localStorage.setItem(COLOR_KEY,JSON.stringify(out));
+ // Keep the public character bar in sync after a successful admin color save.
+ try{localStorage.setItem('site_e_public_colors_v1',JSON.stringify({colors:out,syncedAt:Date.now()}));}catch(_){}
  return out;
 }
 async function request(action,params={},password=''){
