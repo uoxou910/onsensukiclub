@@ -69,14 +69,9 @@ function driveImageUrl(src,fileId=''){
  const idFromFile=String(fileId||'').trim();
  if(!raw&&!idFromFile)return '';
  let id='';
- if(raw){
-  try{
-   const url=new URL(raw,location.href);
-   if(url.hostname==='drive.google.com'||url.hostname==='www.drive.google.com'){
-    id=url.searchParams.get('id')||
-      url.pathname.match(/^\/file\/d\/([\w-]+)/)?.[1]||'';
-   }
-  }catch(_){}
+ if(/^https?:\/\/(?:www\.)?drive\.google\.com\//i.test(raw)){
+  id=raw.match(/[?&]id=([a-zA-Z0-9_-]+)/)?.[1]||
+     raw.match(/\/file\/d\/([a-zA-Z0-9_-]+)/)?.[1]||'';
  }
  // Do not rewrite unrelated external images or unsafe/unknown URLs.
  if(!id&&raw)return raw;
