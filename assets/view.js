@@ -10,7 +10,18 @@ function thumbUrl(url){
   src.match(/\/file\/d\/([a-zA-Z0-9_-]+)/)?.[1];
  return id?'https://drive.google.com/thumbnail?id='+encodeURIComponent(id)+'&sz=w480':src;
 }
-function initialPublicColors(){return S.readColors();}
+const COLOR_CACHE_KEY='site_e_public_colors_v1';
+function initialPublicColors(){
+ const boot=window.SITE_E_BOOTSTRAP_COLORS||{};
+ const bootTime=Date.parse(boot.syncedAt||'')||0;
+ let initial={...S.DEFAULT_COLORS,...(boot.colors||{})};
+ try{
+  const stored=JSON.parse(localStorage.getItem(COLOR_CACHE_KEY)||'null');
+  if(stored?.colors&&Number(stored.syncedAt)>bootTime)
+   initial={...initial,...stored.colors};
+ }catch(_){}
+ return initial;
+}
 let cards=[],colors=initialPublicColors(),character='',query='',lastCardsUpdated='';const wideGrid=window.matchMedia('(min-width: 1400px)');
 function dateUpdate(){
  const timestamps=[Date.parse(lastCardsUpdated||''),...cards.map(x=>Date.parse(x.updated_at||x.created_at||''))].filter(Number.isFinite);
@@ -97,7 +108,9 @@ try{
   if(JSON.stringify(colors)!==JSON.stringify(fresh)){
    colors=fresh;navActions.updateColors(colors);
   }
-
+  try{
+   localStorage.setItem(COLOR_CACHE_KEY,JSON.stringify({colors:fresh,syncedAt:Date.now()}));
+  }catch(_){}
  }
  lastCardsUpdated=d.lastCardsUpdated||'';
  $('#update').textContent=dateUpdate();render();
