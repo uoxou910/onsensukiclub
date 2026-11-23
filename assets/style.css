@@ -799,20 +799,48 @@ body[data-page="edit"] .site-d-header-add {
  }
 }
 @media (max-width:540px) {
+ /* Keep the title, add button and menu on one horizontal header row. */
  body[data-page="edit"] .header-inner {
+  position:relative;
   display:flex;
-  flex-direction:column;
-  align-items:stretch;
-  gap:0;
-  padding:9px 12px 10px;
+  flex-direction:row;
+  align-items:center;
+  justify-content:space-between;
+  min-height:76px;
+  gap:8px;
+  padding:9px 12px;
  }
- body[data-page="edit"] .header-inner > .app-title {font-size:16px;}
+ body[data-page="edit"] .header-inner > .app-title {
+  flex:0 1 auto;
+  min-width:0;
+  font-size:16px;
+  white-space:nowrap;
+  padding-bottom:16px;
+ }
  body[data-page="edit"] .header-actions {
+  display:flex;
+  flex:0 0 auto;
+  align-items:center;
   justify-content:flex-end;
-  width:100%;
+  width:auto;
   gap:7px;
  }
- body[data-page="edit"] .header-date {margin-right:auto;}
+ body[data-page="edit"] .header-date {
+  position:absolute;
+  left:12px;
+  bottom:8px;
+  margin:0;
+  font-size:10px;
+ }
+ body[data-page="edit"] .site-d-header-add {
+  padding:8px 10px;
+  white-space:nowrap;
+ }
+ body[data-page="edit"] .hamburger {
+  flex:0 0 40px;
+  width:40px;
+  height:40px;
+ }
 }
 
 /* Six-column desktop card management; retain the continuous scrolling list. */
