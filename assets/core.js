@@ -62,10 +62,32 @@ async function request(action,params={},password=''){
  if(data.ok===false)throw Error(data.error||'処理に失敗しました');
  return data;
 }
+// Drive's /uc?export=view URL may show an HTML interstitial instead of an image,
+// especially on iOS Safari. Use the image-serving thumbnail endpoint instead.
+function driveImageUrl(src,fileId=''){
+ const raw=String(src||'').trim();
+ const idFromFile=String(fileId||'').trim();
+ if(!raw&&!idFromFile)return '';
+ let id='';
+ if(raw){
+  try{
+   const url=new URL(raw,location.href);
+   if(url.hostname==='drive.google.com'||url.hostname==='www.drive.google.com'){
+    id=url.searchParams.get('id')||
+      url.pathname.match(/^\/file\/d\/([\w-]+)/)?.[1]||'';
+   }
+  }catch(_){}
+ }
+ // Do not rewrite unrelated external images or unsafe/unknown URLs.
+ if(!id&&raw)return raw;
+ if(!id)id=idFromFile;
+ return /^[a-zA-Z0-9_-]+$/.test(id)?
+  'https://drive.google.com/thumbnail?id='+encodeURIComponent(id)+'&sz=w1600':raw;
+}
 function normalizeCard(card){
  if(!card||typeof card!=='object')return null;
  return {...card,id:String(card.id||''),code:String(card.code||''),chara:String(card.chara||''),
-  image_url:String(card.image_url||''),visible:card.visible!==false};
+  image_url:driveImageUrl(card.image_url,card.file_id),visible:card.visible!==false};
 }
 function cardArray(items){return (Array.isArray(items)?items:[]).map(normalizeCard).filter(Boolean);}
 function base(){return {cards:[],owned:[],plans:[],colors:readColors(),lastCardsUpdated:'',lastSavedAt:''};}
@@ -108,6 +130,7 @@ async function modernApi(action,payload={},token=''){
   if(!card?.id)throw Error('アップロード結果のフレカIDが取得できません');
   return card;
  }
+ if(action==='replaceImage'&&data.url)return {...data,url:driveImageUrl(data.url,data.file_id)};
  return data;
 }
 async function api(action,payload={},token=''){
